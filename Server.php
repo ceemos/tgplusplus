@@ -10,7 +10,7 @@ class Server {
     // Port des Daemon
     private $port = 13456;
     // URL, um den Daemon zu starten
-    private $daemon = "http://localhost/duesenchat/daemon.php";
+    private $daemon = "http://localhost/~marcel/duesenchat/daemon.php";
     
     /**
      * Öffnet die Verbindung zum Daemon.
@@ -18,13 +18,18 @@ class Server {
      */
     private function connect (){
         // TCP-Socket
-        $socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
+        $this->socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
         // Versuchen zu connecten
         $res = socket_connect($this->socket, "localhost", $this->port);
         // wenns net klappt, den Daemon zu starten versuchen
         if(!$res){
+            echo "Starting daemon";
+            ob_flush();
             $daemon = file_get_contents($this->daemon);
+            sleep(1);
+            echo " retry...";
             $res = socket_connect($this->socket, "localhost", $this->port);
+            echo " res = $res";
             if(!$res){
                 exit("Unable to connect to Server");
             }
@@ -38,9 +43,9 @@ class Server {
     public function sendMessage($rcpt, $data){
         $this->connect();
         $buf = "POST $rcpt\n";
-        socket_write($socket, $buf, strlen($buf));
-        socket_write($socket, $data, strlen($data));
-        socket_close($socket);
+        socket_write($this->socket, $buf, strlen($buf));
+        socket_write($this->socket, $data, strlen($data));
+        socket_close($this->socket);
     }
     
     /**
@@ -52,9 +57,9 @@ class Server {
     public function pollMessage($user){
         $this->connect();
         $buf = "POLL $user\n";
-        socket_write($socket, $buf, strlen($buf));
-        $data = socket_read($socket, 1024);
-        socket_close($socket);
+        socket_write($this->socket, $buf, strlen($buf));
+        $data = socket_read($this->socket, 1024);
+        socket_close($this->socket);
         return $data;
         
     }
