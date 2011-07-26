@@ -10,10 +10,11 @@ class Daemon {
     
     private $port = 13456;
     
-    
-    
     function start(){
         `echo Start > log.txt`;
+        if(socket_connect($this->socket, "localhost", $this->port)){
+            exit(0);
+        }
         $this->socket = socket_create_listen($this->port);
     }
     
@@ -26,6 +27,11 @@ class Daemon {
             $request = socket_read($client, 1024, PHP_NORMAL_READ);
             $rq = split(" ", $request, 2);
             $user = trim($rq[1]);
+            if($user == ""){ 
+                // Kaputte User, scheint manchmal zu passieren?
+                socket_close($client);
+                continue;
+            }
             `echo "Got User $user" >> log.txt`;
             $mode = $rq[0];
             if($mode == 'POST'){
@@ -41,11 +47,12 @@ class Daemon {
             } else { 
                 `echo "remembering client" >> log.txt`;
                 //Poll
-                // evtl. alte Verbindung schließen
                 if(array_key_exists($user, $clients)){
-                    socket_close($clients[$user]);
+                    $clients[$user][] = $client;
+                } else {
+                     $clients[$user] = array($client);
                 }
-                $clients[$user] = $client;
+               
             }
             unset($client);
             unset($request);
@@ -58,10 +65,12 @@ class Daemon {
                 `echo "Found msg $msgs[0] for user $user" >> log.txt`;
                 if(array_key_exists($user, $clients)){
                     `echo "Found {$user}s Socket" >> log.txt`;
-                    $client = $clients[$user];
                     $msg = array_shift($msgs);
-                    socket_write($client, $msg, strlen($msg));
-                    socket_close($client);
+                    
+                    foreach($clients[$user] as $client) { // mehrere Clients versorgen
+                        socket_write($client, $msg, strlen($msg));
+                        socket_close($client);
+                    }
                     unset($clients[$user]); // Sockets sind "Einweg"   
                     
                     if(count($msgs) == 0){ // falls das die letzte Nachricht dieses Users war 
@@ -75,6 +84,15 @@ class Daemon {
         }
     }
 }
+
+if(isset($_GET["kill"])){
+    `cat daemon-*.pid > daemon.pid`;
+    $oldpid = file_get_contents("daemon.pid");
+    `kill -9 $oldpid`;
+    exit(0);
+}
+$pid = getmypid();
+file_put_contents("daemon-$pid.pid", $pid . " ");
 
 $d = new Daemon();
 

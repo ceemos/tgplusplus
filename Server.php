@@ -26,7 +26,6 @@ class Server {
             echo "Starting daemon";
             ob_flush();
             $daemon = file_get_contents($this->daemon);
-            sleep(1);
             echo " retry...";
             $res = socket_connect($this->socket, "localhost", $this->port);
             echo " res = $res";

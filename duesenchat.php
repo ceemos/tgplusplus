@@ -19,7 +19,7 @@ if($action == 'send'){
     echo "Message $msg sent to user $user";
 } else {
     $buf = $s->pollMessage($user);
-    echo "got Message: \n $buf";
+    echo $buf;
 }
 
 

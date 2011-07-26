@@ -42,7 +42,18 @@ public class ChatClient {
         wgh.getStuff(remoteuser, "send", urlencode(formatmsg(msg, "plain")));
     }
     
+    boolean errorlasttime = false;
+    
     public String pollMsg(){
+        if(errorlasttime){ // damit der Server nicht überschwemmt wird, wenn der daemon abstürtzt
+            errorlasttime = false;
+            try {
+                int t = (int) (3000 * (Math.random() + 1));
+                System.out.println("Error last time, waiting " + t + "ms");
+                Thread.sleep(t);
+            } catch (InterruptedException interruptedException) {
+            }
+        }
         if(wgh.getStuff(localuser, "poll", "")){
             String head = wgh.getResult(1);
             String msg = wgh.getResult(2);
@@ -52,6 +63,8 @@ public class ChatClient {
             } else {
                 return "Cant understand crypto.";
             }
+        } else {
+            errorlasttime = true;
         }
         // Timeout, exception o. Ä.
         return null;
