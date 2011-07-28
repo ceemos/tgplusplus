@@ -55,14 +55,8 @@ public class ChatClient {
             }
         }
         if(wgh.getStuff(localuser, "poll", "")){
-            String head = wgh.getResult(1);
-            String msg = wgh.getResult(2);
-            wgh.findNext();
-            if("plain".equals(head)){
-                return msg;
-            } else {
-                return "Cant understand crypto.";
-            }
+            String msg = wgh.getFullText();
+            return decipherMsg(msg);
         } else {
             errorlasttime = true;
         }
@@ -71,7 +65,13 @@ public class ChatClient {
     }
     
     private String formatmsg(String msg, String head){
-        return head + "\n" + msg;
+        return head + "\n" 
+                + "To: " + remoteuser + "\n"
+                + "\n"
+                + "plain" + "\n"
+                + "From: " + localuser + "\n"
+                + "\n"
+                + msg;
     }
     
     private String urlencode(String s){
@@ -82,6 +82,32 @@ public class ChatClient {
         }
         return s;
     }
-    
+
+    private String parseHeaders(String msg) {
+        String rest = msg;
+        while(!rest.startsWith("\n")){
+            String[] parts = rest.split("\n", 2);
+            rest = parts[1];
+            String header = parts[0];
+            String[] pair = header.split(": ");
+            if(pair[0].equals("From")){
+                remoteuser = pair[1];
+                
+            }
+        }
+        return rest.substring(1);
+    }
+
+    private String decipherMsg(String msg) {
+        String[] parts = msg.split("\n", 2);
+        String head = parts[0];
+        if ("plain".equals(head)) {
+            return parseHeaders(parts[1]);
+        } else {
+            return "Cant understand crypto.";
+        }
+    }
+
+
     
 }

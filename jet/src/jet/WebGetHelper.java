@@ -22,6 +22,7 @@ public class WebGetHelper {
     protected Matcher matcher = null;
     
     protected String userAgent = "CallOfMesk";
+    protected String response;
 
     public WebGetHelper(String url, String regex) {
         this.url = url;
@@ -76,6 +77,7 @@ public class WebGetHelper {
         } 
 
         matcher = regex.matcher(sb);
+        response = sb.toString();
         return matcher.find();
     }
 
@@ -94,6 +96,10 @@ public class WebGetHelper {
      */
     public boolean findNext() {
         return matcher.find();
+    }
+    
+    public String getFullText(){
+        return response;
     }
 
 }
