@@ -41,7 +41,7 @@ public class MainFrame extends javax.swing.JFrame {
         jTextPane1 = new javax.swing.JTextPane();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setMinimumSize(new java.awt.Dimension(200, 100));
+        setMinimumSize(new java.awt.Dimension(300, 150));
 
         jTextField1.setText("msg/cmd");
         jTextField1.addKeyListener(new java.awt.event.KeyAdapter() {
@@ -52,6 +52,7 @@ public class MainFrame extends javax.swing.JFrame {
         getContentPane().add(jTextField1, java.awt.BorderLayout.PAGE_END);
 
         jTextPane1.setEditable(false);
+        jTextPane1.setText("Usage:\n/local <deinname>\n/remote <empfänger>");
         jScrollPane1.setViewportView(jTextPane1);
 
         getContentPane().add(jScrollPane1, java.awt.BorderLayout.CENTER);

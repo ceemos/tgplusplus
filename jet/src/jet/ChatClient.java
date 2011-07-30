@@ -79,7 +79,7 @@ public class ChatClient {
         try {
             return URLEncoder.encode(s, "utf-8");
         } catch (UnsupportedEncodingException unsupportedEncodingException) {
-            System.out.println("Unsupportet encoding. Sending unencoded.");
+            System.out.println("Unsupported encoding. Sending unencoded.");
         }
         return s;
     }
@@ -105,7 +105,7 @@ public class ChatClient {
         if ("plain".equals(head)) {
             return parseHeaders(parts[1]);
         } else {
-            return "Cant understand crypto.";
+            return "Can't understand crypto.";
         }
     }
 

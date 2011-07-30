@@ -4,7 +4,7 @@
   <Properties>
     <Property name="defaultCloseOperation" type="int" value="3"/>
     <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-      <Dimension value="[200, 100]"/>
+      <Dimension value="[300, 150]"/>
     </Property>
   </Properties>
   <SyntheticProperties>
@@ -53,6 +53,7 @@
         <Component class="javax.swing.JTextPane" name="jTextPane1">
           <Properties>
             <Property name="editable" type="boolean" value="false"/>
+            <Property name="text" type="java.lang.String" value="Usage:&#xa;/local &lt;deinname&gt;&#xa;/remote &lt;empf&#xe4;nger&gt;"/>
           </Properties>
         </Component>
       </SubComponents>
