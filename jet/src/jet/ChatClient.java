@@ -11,7 +11,7 @@ import java.util.HashMap;
  */
 public class ChatClient {
 
-    String server = "http://localhost/~marcel/duesenchat/duesenchat.php?user=%s&action=%s&msg=%s";
+    String server = "http://cmos.packagecloud.com/duesenchat/duesenchat.php?user=%s&action=%s&msg=%s";
     WebGetHelper wgh = new WebGetHelper(server, "([^\n]+)\n(.+)");
     
     Key privatersa;
@@ -24,6 +24,7 @@ public class ChatClient {
 
     public void setLocaluser(String localuser) {
         this.localuser = localuser;
+        wgh.abort();
     }
 
     public void setRemoteuser(String remoteuser) {
@@ -39,7 +40,7 @@ public class ChatClient {
     }
 
     public void sendMsg(String msg){
-        wgh.getStuff(remoteuser, "send", urlencode(formatmsg(msg, "plain")));
+        wgh.getStuff("", "send", urlencode(formatmsg(msg, "plain")));
     }
     
     boolean errorlasttime = false;

@@ -23,6 +23,9 @@ public class WebGetHelper {
     
     protected String userAgent = "CallOfMesk";
     protected String response;
+    
+    // nur zum Abbrechen nötig
+    protected HttpURLConnection httpURLConnection;
 
     public WebGetHelper(String url, String regex) {
         this.url = url;
@@ -52,7 +55,7 @@ public class WebGetHelper {
 
         StringBuilder sb = new StringBuilder();
         try {
-            HttpURLConnection httpURLConnection =
+            httpURLConnection =
                     (HttpURLConnection) new URL(request).openConnection();
             httpURLConnection.addRequestProperty("Accept", "*/*");
             httpURLConnection.addRequestProperty("User-Agent", userAgent);
@@ -80,6 +83,14 @@ public class WebGetHelper {
         response = sb.toString();
         return matcher.find();
     }
+    
+    /**
+     * Versucht, die (laufende) Anfrage abzubrechen.
+     */
+    public void abort(){
+        if(httpURLConnection != null)
+            httpURLConnection.disconnect();
+    }
 
     /**
      * Gibt das gefundene Ergbnis das in der RE in der index-ten Klammer war zurueck. 
@@ -98,6 +109,10 @@ public class WebGetHelper {
         return matcher.find();
     }
     
+    /**
+     * 
+     * @return Die komplette Antwort als String
+     */
     public String getFullText(){
         return response;
     }
